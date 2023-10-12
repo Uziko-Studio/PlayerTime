@@ -1,2 +1,8 @@
 info:
-    servername = "servername"
+  servername: "Skyblock"
+mysql:
+  hostname: 172.18.0.1
+  port: 3306
+  database_name: g_PlayerStats
+  username: PlayerStats
+  password: 3B8XNwUvKwoD_8@6

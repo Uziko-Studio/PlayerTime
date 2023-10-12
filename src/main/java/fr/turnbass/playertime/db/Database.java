@@ -1,11 +1,15 @@
-package me.kodysimpson.stattracker.db;
+package fr.turnbass.playertime.db;
 
-import me.kodysimpson.stattracker.model.PlayerStats;
+import fr.turnbass.playertime.PlayerTime;
+import fr.turnbass.playertime.model.PlayerStats;
 
 import java.sql.*;
 
 public class Database {
-
+    private PlayerTime plugin;
+    public Database(PlayerTime plugin) {
+        this.plugin = plugin;
+    }
     private Connection connection;
 
     public Connection getConnection() throws SQLException {
@@ -13,12 +17,12 @@ public class Database {
         if(connection != null){
             return connection;
         }
-
+        String user = plugin.getConfig().getString("mysql.username");
+        String password = plugin.getConfig().getString("mysql.password");
+        String url = "jdbc:mysql://" + plugin.getConfig().getString("mysql.hostname") + ":" +
+                plugin.getConfig().getInt("mysql.port") + "/" + plugin.getConfig().getString("mysql.database_name") +
+                "?autoReconnect=true";
         //Try to connect to my MySQL database running locally
-        String url = "jdbc:mysql://localhost/stat_tracker";
-        String user = "root";
-        String password = "";
-
         Connection connection = DriverManager.getConnection(url, user, password);
 
         this.connection = connection;
@@ -31,9 +35,10 @@ public class Database {
     public void initializeDatabase() throws SQLException {
 
         Statement statement = getConnection().createStatement();
+        String name = plugin.getConfig().getString("info.servername");
 
         //Create the player_stats table
-        String sql = "CREATE TABLE IF NOT EXISTS player_stats (uuid varchar(36) primary key, deaths int, kills int, blocks_broken long, balance double, last_login DATE, last_logout DATE)";
+        String sql = "CREATE TABLE IF NOT EXISTS " + name + " (uuid varchar(36) primary key, playerTime int)";
 
         statement.execute(sql);
 
@@ -43,16 +48,16 @@ public class Database {
 
     public PlayerStats findPlayerStatsByUUID(String uuid) throws SQLException {
 
-        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM player_stats WHERE uuid = ?");
+        String name = plugin.getConfig().getString("info.servername");
+        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM `" + name + "` WHERE uuid = ?");
         statement.setString(1, uuid);
-
         ResultSet resultSet = statement.executeQuery();
 
         PlayerStats playerStats;
 
         if(resultSet.next()){
 
-            playerStats = new PlayerStats(resultSet.getString("uuid"), resultSet.getInt("deaths"), resultSet.getInt("kills"), resultSet.getLong("blocks_broken"), resultSet.getDouble("balance"), resultSet.getDate("last_login"), resultSet.getDate("last_logout"));
+            playerStats = new PlayerStats(resultSet.getString("uuid"), resultSet.getInt("playerTime"));
 
             statement.close();
 
@@ -65,43 +70,28 @@ public class Database {
     }
 
     public void createPlayerStats(PlayerStats playerStats) throws SQLException {
-
-        PreparedStatement statement = getConnection()
-                .prepareStatement("INSERT INTO player_stats(uuid, deaths, kills, blocks_broken, balance, last_login, last_logout) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        statement.setString(1, playerStats.getPlayerUUID());
-        statement.setInt(2, playerStats.getDeaths());
-        statement.setInt(3, playerStats.getKills());
-        statement.setLong(4, playerStats.getBlocksBroken());
-        statement.setDouble(5, playerStats.getBalance());
-        statement.setDate(6, new Date(playerStats.getLastLogin().getTime()));
-        statement.setDate(7, new Date(playerStats.getLastLogout().getTime()));
-
+        String name = plugin.getConfig().getString("info.servername");
+        String query = "INSERT INTO `" + name + "` (uuid, playerTime) VALUES ("
+                + "'" + playerStats.getPlayerUUID() + "', "
+                + "'" + playerStats.getPlayerTime() + "')";
+        PreparedStatement statement = getConnection().prepareStatement(query);
         statement.executeUpdate();
-
         statement.close();
-
     }
 
     public void updatePlayerStats(PlayerStats playerStats) throws SQLException {
-
-        PreparedStatement statement = getConnection().prepareStatement("UPDATE player_stats SET deaths = ?, kills = ?, blocks_broken = ?, balance = ?, last_login = ?, last_logout = ? WHERE uuid = ?");
-        statement.setInt(1, playerStats.getDeaths());
-        statement.setInt(2, playerStats.getKills());
-        statement.setLong(3, playerStats.getBlocksBroken());
-        statement.setDouble(4, playerStats.getBalance());
-        statement.setDate(5, new Date(playerStats.getLastLogin().getTime()));
-        statement.setDate(6, new Date(playerStats.getLastLogout().getTime()));
-        statement.setString(7, playerStats.getPlayerUUID());
-
+        String name = plugin.getConfig().getString("info.servername");
+        String query = "INSERT INTO `" + name + "` (uuid, playerTime) VALUES (?, ?)";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, playerStats.getPlayerUUID());
+        statement.setInt(2, playerStats.getPlayerTime());
         statement.executeUpdate();
-
         statement.close();
-
     }
 
     public void deletePlayerStats(PlayerStats playerStats) throws SQLException {
-
-        PreparedStatement statement = getConnection().prepareStatement("DELETE FROM player_stats WHERE uuid = ?");
+        String name = plugin.getConfig().getString("info.servername");
+        PreparedStatement statement = getConnection().prepareStatement("DELETE FROM `"+name+"` WHERE uuid = ?");
         statement.setString(1, playerStats.getPlayerUUID());
 
         statement.executeUpdate();
