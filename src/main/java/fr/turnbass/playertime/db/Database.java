@@ -71,7 +71,7 @@ public class Database {
 
     public void createPlayerStats(PlayerStats playerStats) throws SQLException {
         String name = plugin.getConfig().getString("info.servername");
-        String query = "INSERT INTO `" + name + "` (uuid, playerTime) VALUES ("
+        String query = "INSERT INTO `" + name + "` (uuid, playerTime) VALUES("
                 + "'" + playerStats.getPlayerUUID() + "', "
                 + "'" + playerStats.getPlayerTime() + "')";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -81,10 +81,10 @@ public class Database {
 
     public void updatePlayerStats(PlayerStats playerStats) throws SQLException {
         String name = plugin.getConfig().getString("info.servername");
-        String query = "INSERT INTO `" + name + "` (uuid, playerTime) VALUES (?, ?)";
+        String query = "UPDATE `" + name + "` SET playerTime = ? WHERE uuid = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setString(1, playerStats.getPlayerUUID());
-        statement.setInt(2, playerStats.getPlayerTime());
+        statement.setInt(1, playerStats.getPlayerTime());
+        statement.setString(2, playerStats.getPlayerUUID());
         statement.executeUpdate();
         statement.close();
     }

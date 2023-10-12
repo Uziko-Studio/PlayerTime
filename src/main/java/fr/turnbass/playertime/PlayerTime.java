@@ -2,7 +2,6 @@ package fr.turnbass.playertime;
 
 import fr.turnbass.playertime.db.Database;
 import fr.turnbass.playertime.listeners.Listeners;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
