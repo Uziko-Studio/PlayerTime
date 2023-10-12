@@ -1,0 +1,4 @@
+name: PlayerTime
+version: '${project.version}'
+main: fr.turnbass.playertime.PlayerTime
+api-version: '1.20'
