@@ -1,5 +1,6 @@
 package fr.turnbass.playertime;
 
+import fr.turnbass.playertime.Placeholder.TimeHolder;
 import fr.turnbass.playertime.db.Database;
 import fr.turnbass.playertime.listeners.Listeners;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -36,12 +37,6 @@ public final class PlayerTime extends JavaPlugin implements Listener {
 
         // Charger la configuration
         config = YamlConfiguration.loadConfiguration(configFile);
-
-        if (getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            getPluginManager().registerEvents(this, this);
-        } else {
-            getPluginManager().disablePlugin(this);
-        }
         this.database = new Database(this);
         try {
             this.database.initializeDatabase();
@@ -51,6 +46,12 @@ public final class PlayerTime extends JavaPlugin implements Listener {
             System.out.println("Could not initialize database.");
 
 
+        }
+        if (getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            getPluginManager().registerEvents(this, this);
+            new TimeHolder(database).register();
+        } else {
+            getPluginManager().disablePlugin(this);
         }
         instance = this;
         getServer().getPluginManager().registerEvents(new Listeners(database), this);

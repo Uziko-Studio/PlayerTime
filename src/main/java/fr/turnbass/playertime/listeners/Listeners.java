@@ -69,7 +69,7 @@ public class Listeners implements Listener {
     private void startPeriodicTask(Player player) {
         // Planifiez la tâche périodique et obtenez son identifiant
         int taskId = new BukkitRunnable() {
-            private int timeToAdd = 1; // 1 seconde
+            private long timeToAdd = 1; // 1 seconde
 
             @Override
             public void run() {

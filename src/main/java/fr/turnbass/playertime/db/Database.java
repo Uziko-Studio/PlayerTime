@@ -38,7 +38,7 @@ public class Database {
         String name = plugin.getConfig().getString("info.servername");
 
         //Create the player_stats table
-        String sql = "CREATE TABLE IF NOT EXISTS " + name + " (uuid varchar(36) primary key, playerTime int)";
+        String sql = "CREATE TABLE IF NOT EXISTS " + name + " (uuid varchar(36) primary key, playerTime long)";
 
         statement.execute(sql);
 
@@ -83,7 +83,7 @@ public class Database {
         String name = plugin.getConfig().getString("info.servername");
         String query = "UPDATE `" + name + "` SET playerTime = ? WHERE uuid = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, playerStats.getPlayerTime());
+        statement.setLong(1, playerStats.getPlayerTime());
         statement.setString(2, playerStats.getPlayerUUID());
         statement.executeUpdate();
         statement.close();

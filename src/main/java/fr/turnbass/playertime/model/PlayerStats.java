@@ -7,7 +7,7 @@ public class PlayerStats {
     private String playerUUID;
 
     //random stats on each player
-    private int playerTime;
+    private long playerTime;
 
     //last login and logout times
     private Date lastLogin;
@@ -26,9 +26,9 @@ public class PlayerStats {
         this.playerUUID = playerUUID;
     }
 
-    public void setPlayerTime(int playerTime) {this.playerTime = playerTime;}
+    public void setPlayerTime(long playerTime) {this.playerTime = playerTime;}
 
-    public int getPlayerTime() {return playerTime;}
+    public long getPlayerTime() {return playerTime;}
 
 
 }
