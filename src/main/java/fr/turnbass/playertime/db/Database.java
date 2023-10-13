@@ -39,9 +39,9 @@ public class Database {
 
         //Create the player_stats table
         String sql = "CREATE TABLE IF NOT EXISTS " + name + " (uuid varchar(36) primary key, playerTime long)";
-
+        String sql2 = "CREATE TABLE IF NOT EXISTS  PlayerTime (uuid varchar(36) primary key, playerTime long)";
         statement.execute(sql);
-
+        statement.execute(sql2);
         statement.close();
 
     }
@@ -68,7 +68,6 @@ public class Database {
 
         return null;
     }
-
     public void createPlayerStats(PlayerStats playerStats) throws SQLException {
         String name = plugin.getConfig().getString("info.servername");
         String query = "INSERT INTO `" + name + "` (uuid, playerTime) VALUES("
@@ -99,6 +98,56 @@ public class Database {
         statement.close();
 
     }
+
+    // Global Time Player
+    public PlayerStats findPlayerTimeByUUID(String uuid) throws SQLException {
+
+        PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM `PlayerTime` WHERE uuid = ?");
+        statement.setString(1, uuid);
+        ResultSet resultSet = statement.executeQuery();
+
+        PlayerStats playerStats;
+
+        if(resultSet.next()){
+
+            playerStats = new PlayerStats(resultSet.getString("uuid"), resultSet.getInt("playerTime"));
+
+            statement.close();
+
+            return playerStats;
+        }
+
+        statement.close();
+
+        return null;
+    }
+    public void createPlayerTime(PlayerStats playerStats) throws SQLException {
+        String query = "INSERT INTO `PlayerTime` (uuid, playerTime) VALUES("
+                + "'" + playerStats.getPlayerUUID() + "', "
+                + "'" + playerStats.getPlayerTime() + "')";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.executeUpdate();
+        statement.close();
+    }
+
+    public void updatePlayerTime(PlayerStats playerStats) throws SQLException {
+        String query = "UPDATE `PlayerTime` SET playerTime = ? WHERE uuid = ?";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setLong(1, playerStats.getPlayerTime());
+        statement.setString(2, playerStats.getPlayerUUID());
+        statement.executeUpdate();
+        statement.close();
+    }
+    public void deletePlayerTime(PlayerStats playerStats) throws SQLException {
+        PreparedStatement statement = getConnection().prepareStatement("DELETE FROM `PlayerTime` WHERE uuid = ?");
+        statement.setString(1, playerStats.getPlayerUUID());
+
+        statement.executeUpdate();
+
+        statement.close();
+
+    }
+
 
 }
 

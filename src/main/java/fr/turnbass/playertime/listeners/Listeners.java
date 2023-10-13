@@ -33,6 +33,18 @@ public class Listeners implements Listener {
 
         return playerStats;
     }
+    public PlayerStats getPlayerTimeFromDatabase(Player player) throws SQLException {
+
+        PlayerStats playerStats = database.findPlayerTimeByUUID(player.getUniqueId().toString());
+
+        if (playerStats == null) {
+            playerStats = new PlayerStats(player.getUniqueId().toString(), 1);
+            database.createPlayerTime(playerStats);
+        }
+
+        return playerStats;
+    }
+
     private List<Player> connectedPlayers = new ArrayList<>();
     private Map<Player, Integer> taskIds = new HashMap<>();
     @EventHandler
@@ -43,6 +55,9 @@ public class Listeners implements Listener {
             PlayerStats playerStats = getPlayerStatsFromDatabase(p);
             String UUID = playerStats.getPlayerUUID().toString();
             PlayerTime.getInstance().getLogger().info("Player" +UUID + " joined");
+            PlayerStats PlayedTime = getPlayerTimeFromDatabase(p);
+            String Guuid = PlayedTime.getPlayerUUID().toString();
+            PlayerTime.getInstance().getLogger().info("Player" +Guuid + " Loaded");
             // Ajoutez le joueur à la liste des joueurs connectés
             connectedPlayers.add(p);
 
@@ -77,6 +92,9 @@ public class Listeners implements Listener {
                     PlayerStats playerStats = getPlayerStatsFromDatabase(player);
                     playerStats.setPlayerTime(playerStats.getPlayerTime() + timeToAdd);
                     database.updatePlayerStats(playerStats);
+                    PlayerStats PlayedTime = getPlayerTimeFromDatabase(player);
+                    PlayedTime.setPlayerTime(PlayedTime.getPlayerTime() + timeToAdd);
+                    database.updatePlayerTime(PlayedTime);
                 }catch (SQLException e1){
                     e1.printStackTrace();
                     System.out.println("Could not update player stats after quit.");

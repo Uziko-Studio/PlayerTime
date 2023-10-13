@@ -46,16 +46,42 @@ public class TimeHolder extends PlaceholderExpansion {
 
         return playerStats;
     }
+    public PlayerStats getPlayerTimeFromDatabase(Player player) throws SQLException {
 
-    public long getPlayerTime(Player player) throws SQLException {
+        PlayerStats playerStats = database.findPlayerTimeByUUID(player.getUniqueId().toString());
+
+        if (playerStats == null) {
+            playerStats = new PlayerStats(player.getUniqueId().toString(), 1);
+            database.createPlayerTime(playerStats);
+        }
+
+        return playerStats;
+    }
+    public long getPlayerStats(Player player) throws SQLException {
 
         PlayerStats playerStats = getPlayerStatsFromDatabase(player);
         long time = Long.parseLong(String.valueOf(playerStats.getPlayerTime()));
         return time;
     }
+    public long getPlayerTime(Player player) throws SQLException {
+
+        PlayerStats playerStats = getPlayerTimeFromDatabase(player);
+        long time = Long.parseLong(String.valueOf(playerStats.getPlayerTime()));
+        return time;
+    }
+
         @Override
         public String onRequest(OfflinePlayer player, String params) {
             if(params.equalsIgnoreCase("PlayerTime")){
+                long time = 0;
+                try {
+                    time = getPlayerStats((Player) player);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                return TimeUtils.secondsToHHMMSS(time);
+            }
+            if(params.equalsIgnoreCase("ServerPlayerTime")){
                 long time = 0;
                 try {
                     time = getPlayerTime((Player) player);
@@ -64,7 +90,6 @@ public class TimeHolder extends PlaceholderExpansion {
                 }
                 return TimeUtils.secondsToHHMMSS(time);
             }
-
             return null; // Placeholder is unknown by the Expansion
         }
 }
