@@ -13,7 +13,7 @@ public class PlayerStats {
     private Date lastLogin;
     private Date lastLogout;
 
-    public PlayerStats(String playerUUID,int playerTime) {
+    public PlayerStats(String playerUUID,long playerTime) {
         this.playerUUID = playerUUID;
         this.playerTime = playerTime;
     }

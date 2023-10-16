@@ -57,7 +57,7 @@ public class Database {
 
         if(resultSet.next()){
 
-            playerStats = new PlayerStats(resultSet.getString("uuid"), resultSet.getInt("playerTime"));
+            playerStats = new PlayerStats(resultSet.getString("uuid"), (int) resultSet.getLong("playerTime"));
 
             statement.close();
 
@@ -110,7 +110,7 @@ public class Database {
 
         if(resultSet.next()){
 
-            playerStats = new PlayerStats(resultSet.getString("uuid"), resultSet.getInt("playerTime"));
+            playerStats = new PlayerStats(resultSet.getString("uuid"), (int) resultSet.getLong("playerTime"));
 
             statement.close();
 

@@ -6,7 +6,7 @@
 
     <groupId>fr.turnbass</groupId>
     <artifactId>PlayerTime</artifactId>
-    <version>0.0.3</version>
+    <version>0.5</version>
     <packaging>jar</packaging>
 
     <name>PlayerTime</name>

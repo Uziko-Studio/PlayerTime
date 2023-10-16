@@ -1,8 +1,12 @@
 package fr.turnbass.playertime;
 
+import fr.turnbass.playertime.Command.PlayedTimeCmd;
 import fr.turnbass.playertime.Placeholder.TimeHolder;
 import fr.turnbass.playertime.db.Database;
+import fr.turnbass.playertime.listeners.CmdUtils;
 import fr.turnbass.playertime.listeners.Listeners;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -55,9 +59,13 @@ public final class PlayerTime extends JavaPlugin implements Listener {
         }
         instance = this;
         getServer().getPluginManager().registerEvents(new Listeners(database), this);
-        System.out.println("Plugin started...");
-    }
+        getServer().getPluginManager().registerEvents(new CmdUtils(database, this), this);
+        getCommand("playedtime").setExecutor(new PlayedTimeCmd(new CmdUtils(database,this)));
+        getCommand("playedtime").setTabCompleter(new PlayedTimeCmd(new CmdUtils(database,this)));
 
+
+
+    }
     public static Plugin getInstance() {
         return instance;
     }

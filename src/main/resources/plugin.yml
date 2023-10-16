@@ -3,5 +3,8 @@ version: '${project.version}'
 main: fr.turnbass.playertime.PlayerTime
 api-version: '1.20'
 author: turnbass
-
 softdepend: [PlaceholderAPI]
+commands:
+  playedtime:   # This is the command name
+    description: Set or get a player's PlayedTime
+    usage: /PlayedTime <subcommand> [arguments]
